@@ -1,0 +1,21 @@
+%收入预测
+p_profit=[166.2	10.256	2.87
+   389.3	40.610 	2.87
+   609.8	45.438	2.87
+   59.4	    13.14	4.11
+   602.4	43.031 	3.66
+   102.3	13.216 	4.11
+   59   	13.675 	4.11
+   170.35	11.640 	3.66
+   190.6	 11.3  2.87]';
+
+t_profit=[29.085 68.128 106.715 10.395 105.42 17.903 10.325 29.811 33.355];
+
+[pn_profit,minp_profit,maxp_profit,tn,mint_profit,maxt_profit]=premnmx(p_profit,t_profit);
+net_profit=newff(minmax(p_profit),[10,1],{'tansig','purelin'},'traingda');
+net_profit.trainParam.goal=0.001;
+net_profit.trainParam.show=20;
+net_profit.trainParam.epochs=1000;
+net_profit.trainParam.min_grad=1e-10;
+net_profit.trainParam.mc=0.95;
+[net_profit,tr]=train(net_profit,pn_profit,tn);
