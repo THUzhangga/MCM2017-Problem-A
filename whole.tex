@@ -1,0 +1,844 @@
+\documentclass[12pt]{article}%开始写文档，字号为12号字
+\usepackage{amsmath}%数学公式
+\usepackage{graphicx}%图片加载
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{fancyhdr}%页眉页脚
+\usepackage{geometry}
+\usepackage{enumerate}%项目符号
+\usepackage{lastpage}%总页数
+\usepackage{makecell}
+\usepackage{threeparttable}
+\usepackage{caption}
+\usepackage{cite}
+\title{Make the River Benefit People}
+\author{Team \#70732}
+\date{\today}
+\geometry{a4paper,scale=0.8}%A4纸，填充80%
+\newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}%设置引用上标
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}%表格自动换行设置
+%\captionsetup{font={scriptsize}}%设置图片标注字号
+\setlength\parskip{.3\baselineskip}%设定段落间距
+\begin{document}
+%插summary图
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{summary.png}
+	\label{Summary}
+\end{figure}
+\begin{center}
+\textbf{Summary}
+\end{center}
+Our goal is to establish a series of models to determine a new dams system along the Zambezi River. After weighing both economic and security factors, we determine the number and location of the dams accordingly. More importantly, we predict the discharge and provide a strategy to handle extreme conditions. We establish four models to achieve this goal.
+\par\noindent
+\par\noindent
+First, to establish relations between features and benefits as well as costs of dams, we use the Back Propagation(BP) neural network to build the Benefit-Cost Analysis Model. We assume 7 cost-determining indexes and 3 benefit-determining indexes. Data of several worldwide dams incluing 10 indexes above, together with costs and benefits, are obtained from professional institutes. We train the neural network and get 2 results of preferable fits.
+\par\noindent
+\par\noindent
+Based on the above model, we establish a Decision-Making Model of small dams. Our aim is to determine the number of dams needed, the location of dams as well as the size of each dam. So the number of dams and the position of the most upstream dam are set as two unknowns. For safety concern, we assume the total capacity of small reservoirs equals to Kariba and every small reservoir distributes the same reservoir capacity. Then we build a relationship between unknowns and water levels of all dams. Furthermore, a group of 7 indexes mentioned in the above model are determined according to water level. We make the benefit-cost analysis utilizing those 7 indexes which directly depends on the two unknowns above. After traversing all befitting possibilities of the two unknowns, we manage to find a group of unknowns corresponding to the best economic efficiency. Eventually, we know the number of dams, the position of the most upstream dam and all parameters of every dam.
+\par\noindent
+\par\noindent
+Then we establish the Flow Design Model to predict the maximum and minimum discharge. In this model, we choose the probability statistic method .We consider the annually discharge $Q$ as a random variable. A mathematical probability distribution, Person-\uppercase\expandafter{\romannumeral3} distribution, is used to express the distribution of discharge variables. We can thus use this distribution to predict the discharge of any frequency, including extreme conditions.
+\par\noindent
+\par\noindent
+Finally, we build a Connection Reservoirs Operation Model to determine the order of pouring or storing water under extreme conditions. We assume the optimal criterion of operating reservoirs is to achieve maximum electric power. Through rigorous mathematical derivation, we get 2 concise indexes for judging the order of pouring and storing water separately. The 2 indexes are  easy to use under extreme conditions such as floods and droughts.
+\thispagestyle{empty}
+
+\newpage
+\maketitle%标题
+
+\tableofcontents%目录
+\thispagestyle{empty}
+\setcounter{page}{0}
+\newpage%分页
+%页眉页脚
+\pagestyle{fancy} %fancyhdr宏包新增的页面风格
+\fancyhf{}
+\lhead{Team \#70732}
+\rhead{Page \thepage\ of 21}%当前页  of 总页数
+%第一大项标题
+\section{Introduction}
+\subsection{Background Review}
+The Kariba Dam built in the 1950s on the Zambezi River is one of the largest dams in Africa. Its construction was controversial, the Institute of Risk Management South Africa Risk Research Report warns people that the dam is in dire need of maintenance. The Zambezi River Authority raises a lot of money and prepares to take some measures, which touches off a wide disscussion of it.
+\subsection{Restatement of the Problem}
+We are required to solve two problems:
+\begin{itemize}
+    \item Provide a brief assessment of the three options.
+    \item Provide a detailed analysis of Option 3.
+\par\noindent
+As for the first problem, we calculate costs and benefits of the three options and determine which one is the best.
+\par\noindent
+As for the second problem, We decompose it into three sub-problems:
+	\begin{itemize}
+	\item Determine the number, location and various indexes of the new dams along the Zambezi River. We should weigh both economic and security factors.
+	\item Predict the maximum/minimum discharge under extreme conditions.
+	\item Explain and justify the actions that should be taken to properly handle emergency water flow situations (flooding or prolonged low water conditions).
+	\end{itemize}
+\end{itemize}
+We solve the problem in 3 steps.
+\begin{enumerate}[Step1.]
+	\item We seek a model to establish relations between features and benefits as well as costs of dams. Based on the above model, we balance security and economic efficiency. Then we determine the number of dams needed, the location of dams as well as the indexes of each dam.
+	\item We use probability statistic model to obtain the discharge of specific frequency. Thus we can predict the maximum and minimum discharge.
+	\item We try to find the best way to operate reservoirs under extreme conditions such as flood or low water.
+\end{enumerate}
+\newpage
+\subsection{Notification}
+%Notification 表格！！
+\begin{table}[H]
+%\footnotesize
+\centering  
+\caption{Notification}
+\label{dam}
+\begin{tabular}{|cccc|}%{p{0.9\columnwidth}}
+\hline
+Symbol  &  Definition  &  Units  &  Remarks \\
+\hline
+$i$  &  a corner mark & Unitless &  \tabincell{c}{It represents the order of something\\ $i=1$ represents the first one.}\\
+\hline
+$RC$  &  Reservoir Capacity & $10^8m^3$ & \tabincell{c}{Adding the corner mark i \\means the corresponding property of $dam_{i}$}\\
+\hline
+$DH$  &  Dam Height  &  $m$ & \tabincell{c}{Detailed in the Remarks of RC}\\
+\hline
+$CV$  &  Concrete Volume & $10^4m^3$ & \tabincell{c}{Detailed in the\\ Remarks of RC}\\
+\hline
+$EV$  &  Earth Volume & $10^4m^3$ & \tabincell{c}{Detailed in the\\ Remarks of RC}\\
+\hline
+$IC$  &  Installed Capacity  &  $10^4kw$ & \tabincell{c}{Detailed in the\\ Remarks of RC}\\
+\hline
+$CP$  &  Construction Period & $year$ & \\
+\hline
+$LEL$  &  Local Economic Level & $10^4$RMB & \\
+\hline
+$CC$  &  Conversion Cost & $10^8$RMB & \\
+\hline
+$AGC$  &  Annual Generating  Capacity  &  $10^8 kw\cdot h$  & \tabincell{c}{Detailed in the\\ Remarks of RC}\\
+\hline
+$CA$  & Catchment Area&  $10^4km^2$ & \tabincell{c}{Detailed in the\\ Remarks of RC}\\
+\hline
+$AB$  &  Annual Benefits  &  $10^8$RMB &  \\
+\hline
+$RC_{Kariba}$  &  Reservoir Capacity of Kariba  & $10^8m^3$ &  \\
+\hline
+$IC_{Kariba}$  &  Installed Capacity of Kariba  & $10^4kw$ &  \\
+\hline
+$CV_{Kariba}$  &  Concrete Volume of Kariba  &  $10^4m^3$ & \\
+\hline
+$CA_{Kariba}$  &  Catchment Area of Kariba  & $10^4km^2$ &  \\
+\hline
+$PP$  &  Payback Period of investment  &  $year$ & \\
+\hline
+$v$  &  vector & Unitless& \\
+\hline
+$nv$  &  normalized vector & Unitless & \\
+\hline
+$w$  &  the width of all reservoirs  & $km$  & \\
+\hline
+$x$ &  \tabincell{c}{the distance between the most\\ upstream small dam\\ and the Zero Point} & $km$ & \\
+\hline
+$n$  &  the number of small dams  &  Unitless &  \\
+\hline
+$f(t)$  &  \tabincell{c}{Spline function of\\ river profiles} &  Unitless & \\
+\hline
+$S_{i}$  &  \tabincell{c}{distance between \\$dam_{i}$ and $dam{i+1}$} & $km$ & \\ 
+\hline
+$x_{i}$  &  X-axis of  $dam_{i}$  &  $km$ & \\
+\hline
+$h_{i}$  &  water level of $dam_{i}$  &  $m$ & \\
+\hline
+$l_{i}$  &  dam width of $dam_{i}$  &  $m$ & \\
+\hline
+$Q$ & discharge & $m^3$ & \\
+\hline
+$\Gamma (x)$ & a function & Unitless & $\Gamma(x) = \int_{0}^{\infty} t^{x-1} e^{-t} dt$ \\
+\hline
+$C_{V}$ & coefficient of variation & Unitless & \\
+\hline
+$C_{S}$ & coefficient of skewness & Unitless &  \\
+\hline
+\end{tabular}
+\end{table}
+
+%简单说明三选择！
+\section{A Brief Assessment of the Three Options}
+\subsection{Qualitative Analysis}
+\begin{itemize}
+    \item{\textbf{(Option 1)Repairing the existing Kariba Dam}}
+	\begin{itemize}
+    	\item{\textbf{Costs}}
+		\par\noindent
+		The costs mainly include the following items:
+			\begin{enumerate}[a.]
+			\item Materials such as concrete used to repair the dam.
+			\item The labor.
+			\item Electric energy and water source.
+			\item Management and maintenance.
+			\end{enumerate}
+		This Option obviously costs the least money.
+
+    	\item{\textbf{Benefits}}
+		\par\noindent
+		The benefits mainly include the following items
+			\begin{enumerate}[a.]
+			\item Electricity generation.
+			\item Irrigation.
+			\item Water supply.
+			\end{enumerate}
+		Repairing the dam prolongs the service life of the dam. Thus, the dam can bring a lot more economic benefits in the long term.
+	\end{itemize}
+    \item{\textbf{(Option 2)Rebuilding the existing Kariba Dam}}
+	\begin{itemize}
+    	\item{\textbf{Costs}}
+		\par\noindent
+		The costs of the second option are similar to the first one. But we should take care that rebuilding a dam costs us much more materials and energy than repairing a dam. In addition, there are another two items which we should notice :
+			\begin{enumerate}[a.]
+			\item Compared with the first option, we need to move the previous dam and build the new dam, which may last over 10 years. Different from the first option, the dam cannot bring any benefit for us during this time, which should be considered as potential cost.
+			\item In order to protect downstream areas from flood disaster when removing the previous dam, we need to take some measures, which cost us some money.
+			\end{enumerate}
+
+    	\item{\textbf{Benefits}}
+		\par\noindent
+		In general, the benefits of the second option are similar to the first one. Compared with 1950s(the Kariba dam was built in 1950s), there are a lot of new technology and materials now. If we rebuild the dam, it will be more powerful and durable. For example, it may provide more electric energy and benefit us more then the first option.
+			\begin{enumerate}[a.]
+			\item Electricity generation.
+			\item Irrigation.
+			\item Water supply.
+			\end{enumerate}
+	\end{itemize}
+	\item{\textbf{(Option 3)Removing the Kariba Dam and replacing it with a series of ten to twenty smaller dams along the Zambezi River.}}
+	\begin{itemize}
+    	\item{\textbf{Costs}}
+		\par\noindent
+		 In general, the costs of the third option are similar to the second one.
+		\item{\textbf{Benefit}}
+		\par\noindent
+		In general, the benefits of the third option are similar to the second one. But there are 3 another obvious benefits:
+			\begin{enumerate}[a.]
+			\item A series of dams increase the catchment area affected. Thus, the dams can irrigate and provide water for more areas.
+			\item When we need electric energy and water, we choose the energy generated from the nearest dam. The decrease of transportation cost can increase the profit conversely.
+			\item Even one dam of the series breaks down, the other dams are in normal state. In other words, the economic effect is sustained.
+			\end{enumerate}
+	\end{itemize}	
+\end{itemize}
+	In a word, each option has its advantages and disadvantages. Thus, we use the economical principles to analyse quantitatively.
+\subsection{Quantitative Analysis}
+In order to have a intuitive assessment of the three options, we use some data calculated by our model in Requirement 2, and we find some statistics(such as materials costs). The data are listed as follows:
+%插入一个复杂的表
+%表格！
+\begin{table}[H]
+	\centering 
+	\footnotesize 
+	\caption{Cost Data of Some Dams}
+	\label{complex}
+	\begin{tabular}{|ccccccccc|}
+	\hline
+option & costs & CP & \multicolumn{4}{c}{benefits} & LE & NAV \\
+\hline
+   &  &  & Genetating Capacity & Water supply and irrigation & other & sum & & \\
+\hline
+1  &  0.6  &  2  &  0.27  &  0.19  &  0.05  &  0.51  &  20  &  0.40\\
+\hline
+2  &  5  &  10  &  0.49  &  0.32  &  0.1  &  0.31  &  70  &  0.14\\
+\hline
+3  &  4  &  5  &  0.51  &  0.35  &  0.12  &  0.51  &  100  &  0.47\\
+\hline
+\end{tabular}
+%给表格加脚注
+\begin{tablenotes}
+        \footnotesize
+        \item 1.Costs include materials, labor and energy(billion dollars/year).
+		\item 2.CP is the short form of construction period(year).
+		\item 3.The unit of benefits is dollars/year. 
+		\item 4.LE is the short form of life expectancy(year).
+		\item 5.NAV is the short form of net annual value(billion dollors)
+      \end{tablenotes}
+\end{table} 
+\noindent
+According to the economical principles, we use the data to work out the NAV(a parameter in economics which used to assess the profit of a engineering project)of the three options. We can clearly see that the NAV of option 3 is the largest, which means that the option 3 brings us the best economic profits.
+\par\noindent
+\par\noindent
+\par\noindent
+Overall,the option 3 is the best choice for us, and we will analyse the option 3 in detail in the main part of our paper.
+
+%BP模型!
+\section{Benefits-Costs Analysis Model}
+\subsection{Introduction}
+	Back Propagation(BP) is a common method of training artificial neural networks. According to almighty approaching theorem, a 3-layer BP neural network with a hidden layer can approximate to any continuous function of bounded domain with arbitrary precision.\upcite{wanneng} 3-layer BP neural network can be explained by figure \ref{3lbp}. There are several inputs and outputs, and three layers: the input layer(I), output layer(O) and hide layer(H). The input layer neurons receive the inputs and transfer signals to hidden layer neurons. There is a weight between every two neurons in the near layers. The output layer neurons receive signals from the hidden layer neurons and change them to outputs. By adjusting the weights, they can be very close to the desired outputs.
+%插图
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{3lbp.jpg}
+	\caption{A 3-layer neural network}
+	\label{3lbp}
+\end{figure}
+\subsection{Assumptions}
+Benefits of a dam are various, including generating capacity, flood protection, irrigation, water supply and so on. However, analysing them separately is quite difficult. Professional institutes can give a specific number about the benefit after evaluating the dam, like the annual benefit($AB$). But we cannot know how do they get it. Thus, we assume benefits of a dam are mainly determined by 3 indexes listed below and we try to build a network between our indexes and the final benefit.
+%分点（有编号）
+\begin{enumerate}[1.]
+	\item \textbf{Reservoir Capacity.} It is obvious in real life that the reservoir capacity determines the scale of the dam, and so do the benefits.
+	\item \textbf{Annual Generating Capacity.} Kariba Dam was mainly built to provide sufficient power for copper mines. Thus we can assume that the benefit is mainly from the annual generating capacity.
+	\item \textbf{Catchment Area.} Catchment area is the whole area that the dam can affect, it usually means the population that people who can benefit from the dam.
+\end{enumerate}
+Likewise, we assume that the Cost of dam is mainly determined by the following 7 indexes:
+\begin{enumerate}[1.]
+	\item \textbf{Reservoir Capacity.} Reservoir capacity can also determine the costs. The larger reservoir capacity costs more.
+	\item \textbf{Dam Height.} Empirically, dam height is closely related to the scale of the project.
+	\item \textbf{Concrete Volume.} Concrete occupies a large proportion of costs, and it is one of the most visualized index of a dam.
+	\item \textbf{Earth Volume.} Earth volume can also represent the scale of the dam in most cases.
+	\item \textbf{Installed Capacity.} Installed capacity shows how many electric generators are used, and that is a big investment.
+	\item \textbf{Local Economic Level.} This determine the labor cost of the construction project. Generally, we use the GDP per person to serve as the index of economic level.
+	\item \textbf{Construction Period.} Construction project spends enormous sums every day. So the longer construction period is, the higher costs are.
+\end{enumerate}
+Besides, the cost value is not the past construction cost. Instead, we use Conversion Cost(CC) - The cost today obtained by discounting the rate of income. Set the conversion cost as $CC$, the past cost as $C$, the start date(year) as $t_{0}$, the current date(year) as $t$, the rate of income(annual) as $r$, then:
+$$CC = C * (1 + r)^{t-t_{0}}$$
+According to the hydraulic industry standard, the rate of income is 7\%. So the above equation changes to the following form:
+$$CC = C * (1 + 7\%)^{t-t_{0}}$$
+For the sake of convenience, we still call the conversion cost as “cost” in the rest of this article.
+
+
+\subsection{Building BP neuron network for Costs}
+We set the number of the input layer neurons equal to the inputs, so do the output layer neurons. According to assumption(1), there are several indexes closely related to the cost including Reservoir Capacity($RC$), Dam Height($DH$), Concrete Volume($CV$), Earth Volume($EV$), Installed Capacity($IC$), Construction Period($CP$), Local Economic Level ($LEL$). Then we collect data of several dams to serve as inputs. But these indexes should be normalized before they are used because normalized inputs are much easier to train. A easy and quick normalize algorithm is linear transformation algorithm. For example, set the vector to be normalized as $v$, the normalized vector as $nv$, some element of $v$ as $v_{i}$, the ith component of $nv$ as $nv_{i}$, then:
+$$nv_{i} = \frac{v_{i}-min(v)}{max(v) - min(v)}$$
+These indexes are included in table \ref{dam}.\upcite{wiki}
+%表格！
+\begin{table}
+\footnotesize
+\centering  
+\caption{Data of Several Dams(1)}
+\label{dam}
+\begin{tabular}{|cccccccccc|}
+\hline
+Name  &  LYX  &  BHT  &  LWX  &  LJX  &  ET  &  XW  &  JP  &  WDD  &  XLD\\
+\hline
+$CV/(10^4 m^3)$  &  370  &  796  &  258  &  200  &  390  &  1056  &  474  &  381  &  289\\
+\hline
+$DH/m$  &  178  &  289  &  250  &  165  &  240  &  292  &  305  &  270  &  295\\
+\hline
+$RC/(10^8 m^3)$  &  247  &  206  &  11  &  17  &  58  &  151  &  78  &  76  &  140\\
+\hline
+$CP/year$  &  17  &  12  &  6  &  11  &  9  &  8  &  7  &  8  &  14\\
+\hline
+$LEL/(10^4$RMB)  &  4.11  &  3.66  &  4.11  &  4.11  &  3.66  &  2.87 & 2.87   &  2.87  &  2.87\\
+\hline
+$IC/(10^4 kW)$  &  128  &  1600  &  420  &  200  &  330  &  420  &  330  &  1020  &  1440\\
+\hline
+$EV/(10^4 m^3)$  &  157  &  1500  &  210  &  160  &  477  &  1370  &  1000  &  1822  &  730\\
+\hline
+$CC/(10^8$RMB)  &  2246  &  1270  &  387  &  665  &  1547  &  715  &  476  &  1268  &  1728\\
+\hline
+$StartDate/year$  &  1976  &  2010  &  2002  &  1988  &  1991  &  2002  &  2007  &  2012  &  1994\\
+\hline
+$Past Cost$  &  150  &  846  &  150  &  100  &  285  &  277  &  259  &  967  &  390\\
+\hline
+\end{tabular}
+%给表格加脚注
+\begin{tablenotes}
+        \footnotesize
+        \item[1] The names of dams are abbreviated. You can look them up in the appendix.
+      \end{tablenotes}
+\end{table}
+Then we use Matlab to help to build simulation model for BP neuron network. We use the data of the dams to train the neurons and input them into the model. Since the BP neural network is easy to get into local minimum, we must try many times to get the best result. Figure \ref{R-cost} shows a satisfactory result, the coefficient of correlation($R$) reached 0.99883. Once we get the trained neuron network, we can use it to predict the cost with the 7 indexes.
+
+\subsection{Building BP Neuron Network for Benefits}
+Likewise, we build a BP neuron network for the benefits. What is different from the cost is the input. According to our assumptions, the benefit of the dam is mainly determined by Reservoir Capacity($RC$),Annual Generating Capacity($AGC$), Catchment Area($CA$). The outputs are Annual Benefits($AB$). Indexes of these dams are listed in table \ref{benefit}. 
+%表格！
+\begin{table}[H]
+\footnotesize
+\centering  
+\caption{ Data of Several Dams(2)}
+\label{benefit}
+\begin{tabular}{|cccccccccc|}
+\hline
+Name  &  ET  &  XW  &  JP  &  WDD  &  XLD  &  LYX  &  BHT  &  LWX  &  LJX\\
+\hline
+$StartDate/year$  &  1991.0  &  2002.0  &  2007.0  &  2012.0  &  1994.0  &  1976.0  &  2010.0  &  2002.0  &  1988.0\\
+\hline
+$RC/(10^8 m^3)$  &  58.0  &  151.3  &  77.6  &  76.0  &  140.2  &  247.0  &  206.0  &  10.6  &  16.5\\
+\hline
+$AGC/(10^8kw\cdot h)$  &  170.4  &  190.6  &  166.2  &  389.3  &  609.8  &  59.4  &  602.4  &  102.3  &  59.0\\
+\hline
+$CA/(10^4 km^2)$  &  11.6  &  11.3  &  10.3  &  40.6  &  45.4  &  13.1  &  43.0  &  13.2  &  13.7\\
+\hline
+$LEL/(10^4$RMB)  &  3.7  &  2.9  &  2.9  &  2.9  &  2.9  &  4.1  &  3.7  &  4.1  &  4.1\\
+\hline
+$AB/(10^8$RMB)  &  29.8  &  33.4  &  29.1  &  68.1  &  106.7  &  10.4  &  105.4  &  17.9  &  10.3\\
+\hline
+\end{tabular}
+\end{table}
+	%插图（并排图）：剖面图
+	\begin{figure}[H]
+		\begin{minipage}[t]{0.45\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{R_cost.png}
+		\caption{R of costs}
+		\label{R-cost}
+		\end{minipage}
+		\begin{minipage}[t]{0.45\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{R-benefit.png}
+		\caption{R of benefits}
+		\label{R-benefit}
+		\end{minipage}
+	\end{figure}
+%小坝模型！
+
+%第一大项标题
+\section{Decision-Making Model of Small Dams}
+%第一个小标题（晨）
+\subsection{Introduction}
+With the model above, we get access to predict benefits and costs. In order to evaluate the possibilities and economics of replacing Kariba Dam with several small dams, we establish a Decision-Making Model based on the Benefit-Cost Analysis Model. The problem is that exact number of dams and distance between two dams cannot be determined at present. Thus, we set up to bring forward a best solution on the principle of the smallest Payback Period$(PP)$.
+\par
+\noindent
+\par
+\noindent
+Before beginning, we define the reservoir capacity of Kariba as $RC_{Kariba}$ , and the width of all reservoirs is $w$, also, it meets that $w=40km$.
+
+%第二个小标题（晨）
+\subsection{Assumptions}
+%分点（有编号）
+\begin{enumerate}[1.]
+	\item The distance between Kariba and small dams is limited no more than $250km$ and reservoirs originated from the interception of different small dams are independent.
+	\item We set $40km$ as the width of all reservoirs according to the average width of Kariba Reservoir.
+	\item The total capacity of all small reservoirs equals to Kariba and every small reservoir distributes the same reservoir capacity.
+	\item Topographical condition is considered but not the main factor.
+	\item Benefit-cost analysis is based on the model mentioned above.
+	\item Dam height is 1.6 times of the water level in view of the extreme conditions.
+	\item Dam width lies on the position and it is characterized by a step function.
+	\item The actual distance between adjacent dams is 1.2 times of theoretical distance since an enough safety margin is needed.
+	\item Reservoir capacity of Kariba $RC_{Kariba}=180km^3$, and the installed capacity of Kariba $IC_{Kariba}=1626MW$, and the catchment area of Kariba $CA_{Kariba}=663000km^2$.
+\end{enumerate}
+
+%第三个小标题（晨）
+\subsection{Individual Benefit-Cost Analysis}
+\begin{enumerate}[1.]
+	\item{\textbf{Definite the unknowns}} 
+\par\noindent
+Given the assumption that the distance between Kariba Dam and small dams cannot exceed $250km$ and the probability that dams distribute upstream or downstream, the extended length from the first dam to the last is set within $500(=250+250)km$. We select one upstream point which is $250km$ distant from Kariba Dam, and name it \textbf{“Zero Point ”}. Assume the number of small dams is $n$, also the distance between the most upstream small dam and the Zero Point is defined as $x$, and $x$ is no more than $100km$.
+	%第一个小点
+	\item{\textbf{Predict the water level with $x,n$}}
+	%无编号分点
+		\begin{itemize}
+    	\item Individual reservoir capacity. We have supposed that every reservoir has the same capacity. Assume the capacity of reservoir $i$ is $RC_{i}(i=1,2,\dots,n)$, and thus the individual capacity can be expressed as:
+$$RC_{i} = \frac{RC_{Kariba}}{n}$$
+    	\item Establish relationships between capacities and water levels of dams since the latter provide a lower limit of dam heights which tie with the eventual cost closely. In addition to the water level, the reservoir capacity hinges on a two-dimensional parameter, water area, which can be transmuted into a one-dimensional condition if we postulate width of the area   as a constant value.
+    	\item Use river profiles to model the one-dimensional condition. We have collected altitude statistics of river profiles within the confines of $500km$ (shown in Figure \ref{Google Earth}, and figure \ref{primary} shows the profile of 250$km$), which contain 200 points in total, and fit all points by spline curves as shown in figure \ref{spline}. Eventually we get the mathematical expression $f(t)$ of the spline.\upcite{ge}
+	%插图：谷歌地图
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{GE.jpg}
+	\caption{the whole range of the dam distribution(in red color)}
+	\label{Google Earth}
+	\end{figure}
+	%插图（并排图）：剖面图
+	\begin{figure}[H]
+		\begin{minipage}[t]{0.45\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{primary.png}
+		\caption{primary data of $250km$} 
+		\label{primary}
+		\end{minipage}
+		\begin{minipage}[t]{0.45\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{spline.png}
+		\caption{spline fitting of $250km$}
+		\label{spline}
+		\end{minipage}
+	\end{figure}
+		\item Calculate the space between two small dams. Assume $S_{i}$ is the distance between dam $i$ and dam $i+1$. Referred to the Zero Point, we define $x_{i}$ as the X-axis of dam $i$, the first dam is situated $x$ kilometers away from the Zero Point, so  $x1=x$. Accordingly, $x_{i}$ can be expressed by $x_{i}$ and $S_{i}$ as:
+	%分段函数
+ 	$$x_{i}=\begin{cases}
+	x+\sum_{k=1}^{i-1} S_{k},\quad i\leq 1\\
+	x,\quad i=1
+	\end{cases}$$
+Also the reservoir capacity can be expressed as:
+ 	$$RC_{i}=w\cdot \int_{x_{i-1}}^{x_{i}} (f(x_{i-1})-f(t))dt$$
+	%插图：RCD(示意图)
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.8]{RCD.jpg}
+	\caption{Reservoir Capacity Diagram}
+	\label{RCD}
+	\end{figure}
+Meanwhile, with the precondition that the capacity of a small reservoir equals $\frac{RC_{Kariba}}{n}$, the distance between the first and second dam $S_{1}$ should meet:
+ $$S_{1}=\frac{RC_{Kariba}}{n}=w\cdot \int_{x}^{x+S_{1}} (f(x)-f(t))dt$$
+And $S_{1}$ can be uniquely determined as long as $x$ is a numerical value. If $S_{1}$ is certain, the X-axis of the second dam $x_{2}$ can be expressed as:
+ $$x_{2}=x+S_{1}$$
+  Repeatedly do above work for $n$ (the number of dams) times and we can obtain the value of $S_{i}(i=1,2,\dots,n)$  as long as $x$ and $n$ are numerical values, so we cite a functional symbol $g_{i}$ :
+ $$S_{i}=g_{i}(x,n),i=1,2,\dots,n$$
+Furthermore, assume $h_{i}$ is the water level of dam $i$ , and it meet a condition as follows:
+ $$h_{i}=f(x_{i-1})-f(x_{i})$$
+	\end{itemize}
+	%第二个小点
+	\item{\textbf{parameters prediction with the water level}}
+	\begin{itemize}
+	\item{\textbf{Height}} In view of the extreme conditions, the planning height of dam is considered to be 1.6 times of the water level, so if the height of dam $i$ is represented by $DH_{i}$, we get $DH_{i}=1.6 h_{i}$.
+	\item{\textbf{Width}} With regard to the dam width $l_{i}$ of dam $i$, we assume it is equal to the width of valley, which is characterized by a step function:
+	$$l_{i}=\begin{cases}
+	50m(0km< x_{i} \leq 125km)\\
+	120m(125km< x_{i} \leq 250km)\\
+	200m(250km< x_{i} \leq 270km)\\
+	1000m(270km< x_{i} \leq 437km)\\
+	450m(450km< x_{i} \leq 500km)\\
+	\end{cases}$$
+	\item{\textbf{Concrete Volume}} Assume $CV_{i}$ as the concrete volume of dam  $i$, and there is a positive association between $CV_{i}$ and $l_{i}\cdot DH_{i}$, and a coefficient named $\alpha$ is introduced to estimate the proportion of them. On the basis of several dams in the Model 1, $\alpha$ tend to be set as 10. Consequently, the concrete volume can be expressed as:
+ $$CV_{i}=10\times DH_{i}\times l_{i}=10\times 1.6h_{i} \times l_{i}=16h_{i}l_{i}$$
+	\item{\textbf{Earth volume}}
+Define $EV_{i}$ as the earth volume of dam $i$ , and it is roughly the same as the concrete volume $CV_{i}$:
+ $$EV_{i}=CV_{i}=16h_{i}l_{i}$$
+	\item{\textbf{Installed capacity}} Installed capacity depends on the generation benefit which is in close touch with the river fall. In general, the river fall increases along with the water level, and in a premise of ensuring the same benefit or more, the whole installed capacity of all dams cannot be less than Kariba, and we distribute the whole installed capacity to every dam in proportion to the water level. So the installed capacity $IC_{i}$ of dam $i$ is:
+$$IC_{i}=\frac{h_{i}}{\sum_{k=1}^{n}h_{k}}IC_{Kariba}$$
+	\item{\textbf{Construction Period}} Referring to the instances in Model 1, the dam tend to take a long time if the concrete and earth volume are quite enormous. As a result, we set the period to 5 years considering the possibility that several dams start together.
+	\item{\textbf{Local Economic level}}
+	Local Economic level is tightly linked with labor cost. We put to use the GDP per capita of Zambia to evaluate the labor element.
+	\item{\textbf{Annual Generating Capacity}} According to the data in Benefit-Cost Analysis Model, we analyze a fitting function of annual generating capacity $AGC_{i}$ of dam $i$ with installed capacity $IC_{i}$:
+$$AGC_{i}=0.39IC_{i}+5.77=0.39 \frac{hi}{\sum_{k=1}^{n}h_{k}}IC_{Kariba}+5.77$$
+\par
+	%插图：AGC-IC 拟合直线(示意图)
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{AGC.png}
+	\caption{$AGC\sim IC curve$}
+	\label{AGC}
+	\end{figure}
+\item{\textbf{Catchment Area}}
+Catchment area has something to do with the length of river, and consequently we distribute the whole catchment area of Kariba to every dam in proportion to the distance $S_{i}$ between two adjacent dams. And the catchment area   of reservoir $CA_{i}$ can be expressed as:
+$$CA_{i} = \frac{g_{i}(x,n)}{\sum_{k=1}^{n} g_{k}(x,n)} CA_{Kariba}$$
+	\end{itemize}
+Totally, every parameter mentioned in the Benefit-Cost Analysis Model is determined by two independent unknowns $(x,n)$ , four known quantities $(RC_{Kariba},CA_{Kariba},IC_{Kariba})$ and a spline $f(x)$. Note that $S_{i}$ is changed to $1.2S_{i}$ for allowance in extreme situation.
+	%第三个小点
+	\item{\textbf{Benefit-cost analysis}}
+\par
+\noindent
+	Given the preparing work above, one set of data $(x,n)$ correspond to one set of parameters of all dams/reservoirs. The number of small dams $n$ is required to vary in 10 to 20, and the distance between the most upstream small dam and the Zero Point   is limited no more than 100 kilometers. Therefore, the number of all befitting possibilities is unlikely to surpass 100*(20-10)=2000 seeing that not all sets of data meet the reservoir capacity requirement in virtue of too small distance of adjacent dams.
+\par
+\noindent
+\par
+\noindent
+According to the Benefit-Cost Analysis Model, both the annual benefit and cost can be predicted through one set of parameters of dam/reservoir. In order to compare with each other objectively, the static payback period of investment named ‘PP’ is selected to be the central evaluation indicator, and it satisfies the condition as follows:
+$$PP=\frac{cost}{annual\ benefit}$$
+And we devote ourselves to finding the shortest $PP$.
+\end{enumerate}
+%第四个小标题（晨）
+\subsection{Overall Analysis}
+%分点（有编号）
+\begin{enumerate}[1.]
+	\item{\textbf{Determine $x$ and $n$ of the best situation}} 
+\par\noindent
+Traverse all sets of data $(x,n)$ and seek out the best one corresponding to the shortest static payback period of investment, and we tend to choose the best set of data as eventual number of dams and distance between the most upstream small dam and the Zero Point. Except for some sets of data missing the requirement, all available are collected to draw a three-dimensional image as below, and the lowest point in the image is the best set of data mentioned above:
+	%插图：回收期曲面
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.8]{PP.jpg}
+	\caption{$Relation\ of\ PP(Payback Peroid)\ and\ n\ as\ well\ as\ x$}
+	\label{PP}
+	\end{figure}
+	\item{\textbf{Calculate all dimensions in the best situation}} 
+\par\noindent
+With two unknowns solved, we can figure out all dimensions of small dams. After the calculation, we draw a conclusion that the number of dams is 11, and moreover, the distance between the most upstream small dam and the Zero Point is 45 kilometers. In such a situation, the static payback period is 13.8 years finally. Other dimensions can be calculated as below:
+	%插入坝设计表
+	\begin{table}[H]
+	\centering
+	\footnotesize
+	\caption{three parameters of all small designed dams}
+	\label{dam}
+	\begin{tabular}{|cccccccccccc|}
+	\hline
+	$X-axis/km$  &  45  &  81  &  97  &  113  &  135  &  156  &  187  &  233  &  278  &  346  &  427\\
+	\hline
+	$Dam\ Height/m$  &  40.87  &  86.76  &  125.00  &  83.38  &  78.19  &  67.41  &  52.39  &  17.97  &  33.40  &  25.33  &  22.53\\
+	\hline
+	$Water\ Level/m$  &  25.55  &  54.22  &  78.13  &  52.11  &  48.87  &  42.13  &  32.74  &  11.23  &  20.87  &  15.83  &  14.08\\
+	\hline
+	\end{tabular}
+	\end{table}
+Meanwhile, the distribution of all dams can be expressed as following:
+	%插图：坝设计图
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{D.png}
+	\caption{Dimensions of all dams}
+	\label{Dimension}
+	\end{figure}
+\end{enumerate}
+
+%皮尔逊模型！
+
+%第一大项标题
+\section{Flow Design Model}
+\subsection{Introduction}
+	In order to consider the most detrimental effects of the extreme conditions,we need to predict the maximum discharge and minimum discharge upstream the dams. We choose the probability statistic method to predict that.\par\noindent 
+Probability statistic method are used to establish a relationship between the random variable and corresponding frequency.
+\par\noindent
+In this model, we take the annually discharge Q as random variable, and calculate the corresponding experienced frequency .Then we try to find a appropriate probability distribution to express the distribution of discharge series.Thus ,we can use this distribution to calculate the discharge value of specified frequency.
+%第二个小部分
+\subsection{Assumptions}
+%分点（有编号）
+\begin{enumerate}[(1)]
+	\item The climate condition is stable, which means that the climate doesn’t result in the change of the flow law.
+	\item The intensity of Human activities is not large enough to change the underlying surface conditions of the river.
+\end{enumerate}
+%第三个小部分
+\subsection{Model 1: Use Person Type \uppercase\expandafter{\romannumeral3} Distribution to Predict the Maximum Discharge}
+%分点（有编号）
+\begin{enumerate}[1.]
+	%第一个小点
+	\item{\textbf{Choose the discharge series}} 
+	\par\noindent
+It is obvious in real life that the reservoir capacity determines the scale of the dam, and so dose the benefit. The larger the reservoir capacity usually means more benefit because we will have more water to use.
+	\par\noindent
+We get the annually maximum discharge data (1984-2013) from Global Runoff Data Center(GRDC) as shown in table \ref{discharge}.\upcite{grdc}
+%插入表格！
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Annual Maximum Discharge of Zambize River(1984-2013)}
+\label{discharge}
+\begin{tabular}{ccccccccccc}
+\hline
+year  &  1984  &  1985  &  1986  &  1987  &  1988  &  1989  &  1990  &  1991  &  1992  &  1993\\
+\hline
+discharge$(m^3/s)$  &  2275  &  2337  &  2898  &  2609  &  2831  &  11500  &  1184  &  2957  &  1037  &  3927\\
+\hline
+\\
+\hline
+year  &  1994  &  1995  &  1996  &  1997  &  1998  &  1999  &  2000  &  2001  &  2002  &  2003\\
+\hline
+discharge$(m^3/s)$  &  2319  &  1762  &  974  &  1916  &  4125  &  3693  &  3793  &  9917  &  2154  &  3811\\
+\hline
+\\
+\hline
+year  &  2004  &  2005  &  2006  &  2007  &  2008  &  2009  &  2010  &  2011  &  2012  &  2013\\
+\hline
+discharge$(m^3/s)$  &  5255  &  3808  &  3286  &  10023  &  9823  &  5750  &  9817  &  5332  &  3949  &  4191\\
+\hline
+\end{tabular}
+\end{table}
+We assume that the climate condition is stable ,and the impact of human activities can be negligible. Thus,the flow law of the basin is stable,we can believe that data from 1984 to 2013 are representative enough to reflect the flow law of basin.
+	%第二个小点
+	\item{\textbf{Calculate the experienced frequency}}
+	\par\noindent
+	We take annually maximum discharge $Q$ as random variable, $Q$ obey the distribution function $F(x)=P(Q\geq x)$. $F(x)$means the probability of occurrence of event $Q\geq x$.
+\par\noindent
+We sort the data by discharge in descending order:
+%插入表格！
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Cost Data of Some Dams}
+\label{dam}
+\begin{tabular}{cccccccccccc}
+\hline
+sequence number  &  1  &  2  &  3  &  4  &  5  &  6  &  7  &  8  &  9  &  10\\
+\hline
+year  &  1989  &  2007  &  2001  &  2008  &  2010  &  2009  &  2011  &  2004  &  2013  &  1998\\
+\hline
+max discharge($m^3/s$)&  11500  &  10023  &  9917  &  9823  &  9817  &  5750  &  5332  &  5255  &  4191  &  4125\\
+\hline
+frequency(\%)  &  3.23  &  6.45  &  9.68  &  12.90  &  16.13  &  19.35  &  22.58  &  25.81  &  29.03  &  32.26\\
+\hline
+\\
+\hline
+sequence number  &  11  &  12  &  13  &  14  &  15  &  16  &  17  &  18  &  19  &  20\\
+\hline
+year  &  2012  &  1993  &  2003  &  2005  &  2000  &  1999  &  2006  &  1991  &  1986  &  1988\\
+\hline
+max discharge($m^3/s$)  &  3949  &  3927  &  3811  &  3808  &  3793  &  3693  &  3286  &  2957  &  2898  &  2832\\
+\hline
+frequency(\%)  &  35.48  &  38.71  &  41.94  &  45.16  &  48.39  &  51.61  &  54.84  &  58.06  &  61.29  &  64.52\\
+\hline
+\\
+\hline
+sequence number  &  21  &  22  &  23  &  24  &  25  &  26  &  27  &  28  &  29  &  30\\
+\hline
+year  &  1987  &  1985  &  1994  &  1984  &  2002  &  1997  &  1995  &  1990  &  1992  &  1996\\
+\hline
+max discharge($m^3/s$)  &  2609  &  2337  &  2319  &  2275  &  2154  &  1916  &  1762  &  1184  &  1037  &  974\\
+\hline
+frequency(\%)  &  67.74  &  70.97  &  74.19  &  77.42  &  80.65  &  83.87  &  87.10  &  90.32  &  93.55  &  96.77\\
+\hline
+\end{tabular}
+\end{table}
+Then we can calculate the experienced frequency by the following formula:
+$$P=\frac{m}{n}$$
+where $m$ is the sequence number of discharge data, $n$is the total number of discharge data.
+Thus,we find something unreasonable,that the frequency corresponding to the smallest discharge data is 100\%. This can not happen absolutely ,so we must make some adjustments.
+  We find that using following formula to calculate the experienced frequency is more reasonable:
+     $$P=\frac{m}{n+1}$$
+We use this formula to work out the experienced frequency corresponding to different discharge,which are listed in the table above.
+%第三个小点
+	\item{\textbf{Choose a mathematical probability distribution model}}
+	\par\noindent
+ Since we work out the frequency corresponding to different discharge,we can plot the $Q\sim P\ curve$.
+%插图
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{QP.png}
+	\caption{$Q\sim P\ curve$}
+	\label{Q-P}
+\end{figure}
+We choose the Pearson type Ⅲ distribution to express the distribution of annually maximum discharge:
+$$F(x)=P(Q\geq x)=\int_{x_{p}}^{\infty} \frac{\beta ^{\alpha}}{\Gamma (\alpha)}(x-\alpha_{0})^{\alpha -1} e^{-\beta (x-\alpha_{0})}dx	$$
+where  $\Gamma (\alpha)$ is the gamma function of $\alpha$. $\alpha,\beta,\alpha_{0} $ are three parameters in this distribution. They are related with three statistical parameters : $\bar x, C_{V},C_{S}$:
+$$\alpha = \frac{4}{C_{S}^2} \ \ \ \beta=\frac{2}{\bar x C_{V} C_{S}}\ \ \ \alpha_{0} = \bar x (1-\frac{2C_{V}}{C_{S}})$$
+where $\bar x$is the average of the random variable, $C_{V}$is the variation coefficient of the random variable, $C_{S}$is the skewness coefficient of the random variable.
+\par\noindent
+We can obtain unbiased estimates of these three statistical parameters by discharge series.
+$$C_{V}=\sqrt{\sum_{i=1}^n \frac{(\frac{x_{i}}{x}-1)^2}{n-1}}\ \ \ 
+C_{S} = \frac{\sum_{i=1}^n (x_{i}-\bar x)^3}{(n-3)\bar x^3 C_{V}^3}$$
+By the analysis of data above ,we get $\bar x = 4308.5m^3$, $C_{V}=0.6848$, $C_{S}=1.2877$.
+Then we can sketch the Pearson-\uppercase\expandafter{\romannumeral3} Curve:
+%插图：P3曲线
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{P3.png}
+	\caption{$Pearson-\uppercase\expandafter{\romannumeral3} Curve$}
+	\label{P3}
+\end{figure}
+We can see that the discharge variable can be fitted with the Person type Ⅲ distribution.
+%第四个小点
+\item{\textbf{Predict the maximum discharge by Person type \uppercase\expandafter{\romannumeral3} distribution}}
+	\par\noindent
+The \emph{Institute of Risk Management South Africa Risk Research Report} shows that Kariba Dam can resist the magnitude of floodwater that occurs once in 10,000 years. When we replace Kariba dam with smaller dams, we should make sure that they can also resist the flood that occurs once in 10,000 years. Thus, the smaller dams can provide the same level protection. It refers that we need to predict the discharge of the frequency $P=0.01\%$.Then we have:
+$$0.0001=\int_{x_{p}}^{\infty} \frac{\beta ^{\alpha}}{\Gamma (\alpha)}(x-\alpha_{0})^{\alpha -1} e^{-\beta (x-\alpha_{0})}dx	$$
+Solve this equation,then we can get $x_{p}=23815m^3/s$,which means that discharge of flood that occurs once in 10,000 years is $23815m^3/s$.We can consider $23815m^3/s$ as the maximum discharge under the extreme condition.
+
+\end{enumerate}
+
+%第二个小标题！！
+\subsection{Model 2: Use Person Type \uppercase\expandafter{\romannumeral3} Distribution to Predict the Minimum Discharge}
+The prediction process is similar to the above.Here are two differences which we should care about.
+%分点（有编号）
+\begin{enumerate}[1.]
+\item The formula of experienced frequency turns into $P=1-\frac{m}{n+1}$
+\item Short-term floodwater can bring tremendous damage.Different from that, short-term low water may mot cause as severe damage,but long-term low water will badly affect people's livelihood. So we focus on lowest monthly average discharge of each year instead of daily discharge in this model.
+	\par\noindent
+  Data of the lowest monthly discharge of each year(1984-2013) from GRDC is collected and applied to predict the minimum discharge in this model.Because of the limitation of space, no more tautology here. The Person-\uppercase\expandafter{\romannumeral3} curve is plotted as follows:
+%插图：P3枯水曲线
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{P3-L.png}
+	\caption{$Pearson-\uppercase\expandafter{\romannumeral3}\ Curve\ Of\ Low \ Water$}
+	\label{P3-L}
+\end{figure}
+Finally, we obtain the monthly discharge of low flow that occurs once in 10,000 year. We can consider the discharge $45m^3/s$ as the monthly minimum discharge under the extreme condition.
+\end{enumerate}
+
+%水库调度模型！
+\section{Connection Reservoirs Operation Model}
+\subsection{Introduction}
+Through the Decision-Making Model, we obtain $x$(locations), reservoir capacities and water depths of small dams. These reservoirs are from upstream to downstream on the same river, we call them Connection Reservoirs. Through the Flow Design Model, we obtain the peak flow when flood occurs and the low water flow. Based on these data, we build a model to use them to operate reservoirs.
+\subsection{Assumptions}
+%\subsubsection{head 3}
+\begin{enumerate}[1.]
+	\item The operation of a reservoir have impacts on the next reservoirs because they are connected.
+	\item Operation of connection reservoirs includes pouring water when flood comes and storing water when low water occurs.
+	\item The Optimal Criterion of operating the connection reservoirs: while running, electric power of reservoirs should achieve maximum value.
+	\item By changing the order of operating dams, we can get an optimal solution.
+\end{enumerate}
+
+\subsection{Pouring Model During Flood Period}
+During flood period, electric power of reservoirs is divided into two parts below.
+
+\begin{enumerate}[1.]
+	\item Pouring-power-$E_{su}$, which is generated while a reservoir pouring water. Set efficiency as $\eta$, the average water depth as $H$, reservoir capacity as the $RC$, the density of water as $\rho$, the acceleration of gravity as $g$, water-storage as $V$, then:$$E_{su}=\rho V*g \bar{H}=9800 V \bar{H}$$
+where the unit of $E_{su}$ is $W$(watt), and $\rho=1000kg/m^{3},g=9.8N/kg$.
+	\item Storing-power-$E_{st}$, which is generated by the inflow of river. Set the inflow of river as $W_{r}$, then:$$ E_{st} = \rho  W_{r} g \bar{H}=9800 W_{r} \bar{H}$$
+\end{enumerate}
+For connection reservoirs, according to assumption 1, water pouring will hava impacts on $E_{st}$ of the next reservoir. Now consider two reservoirs, as shown in figure \ref{2R}. Set the id of the upper reservoir as A, another as B.
+	%插图：串联水库
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{2R.png}
+		\caption{2-Connection Reservoirs Diagram}
+		\label{2R}
+	\end{figure}
+\noindent
+ Set loss of $E_{st}$ caused by water pouring of A as $dE_{A}$, another as $dE_{B}$, inflow of river at A as $W_{rA}$, efficiency of A as $\eta_{A}$, another as $\eta_{B}$, water depth change of A as $dH_{A}$, another as  $dH_{B}$, loss of water-storage of A as $V_{A}$, then:
+$$dE_{A}=9800 \eta_{A} W_{rA} dH_{A}$$
+$$dE_{B}=9800 \eta_{B} (W_{rA}+V_{A}) dH_{B}$$
+If $dE_{A}<dE_{B}$, namely$\frac{dH_{A}}{dH_{B}}<\frac{W_{rA}+V_{A}}{W_{rA}}$,then 
+A pouring water before B. Set A pour $dV_{A}$, the power of all reservoirs as $N$, the power of A as $N_{VA}$, water surface area of A as $F_{A}$, then:
+$$N_{VA} = 9.8 \eta F_{A} (H_{A}+H_{B}) \frac{dH_{A}}{dt}$$
+%$$\Delta N_{VA}=9.8 \eta \frac{dV_{A}}{dt} (H_{A}+H_{B})=9.8 \eta F_{A} \frac{dH_{A}}{dt} (H_{A}+H_{B})$$
+After water depth of A drops to a secure number, B begins to pour water. Likely, we can get:
+$$N_{VB} = 9.8 \eta F_{B} H_{B} \frac{dH_{B}}{dt}$$
+To ensure the electric power not change(it's determined by users' demond), then:
+$$N_{VA}=N_{VB}\Rightarrow F_{A}(H_{A}+H_{B})\frac{dH_{A}}{dt}=F_{B} H_{B}\frac{dH_{B}}{dt}$$
+Plug it into the former equation, then:
+$$\frac{W_{rA}}{F_{A}(H_{A}+H_{B})}<\frac{W_{rA}+V_{A}}{F_{B}H_{B}}$$
+This can be popularized to cases of $n$ reservoirs. Set $k=\frac{W_{i}}{F_{i} \sum_{j=i}^{n} H_{j}\quad}$, where $W_{i}$ is the inflow of the river plus the water-storage of reservoir $i$. $k$ can be an index judging the order of pouring water. Reservoir with smaller $k$ should pour water earlier. As our computing result shows, usually upstream reservoir has smaller $k$, so when flood come, upstream reservoir should pour water earlier.
+\subsection{Storing Model During Drought Period}
+Likewise, we can derive another index $K=\frac{W'_{i}}{F_{i} \sum_{j=i}^{n} H_{j}\quad}$, where $W'_{i}$ is the sum of inflow of the river minus the water-storage of reservoir $i$. Reservoir with bigger $K$ should store water earlier. As our computing result shows, usually downstream reservoirs have bigger $K$, so under low water conditions, downstream reservoirs should store water earlier.
+\subsection{Conclusion}
+In this model, we assume that the optimal criterion of operating reservoirs is to achieve maximum electric power. Through rigorous mathematical derivation, we get 2 concise indexes for judging the order of pouring and storing water separately. The 2 indexes are  easy to use under extreme conditions such as floods and droughts.
+%优缺点！
+\section{Strengths and Weaknesses}
+\subsection{Strengths}
+		\begin{enumerate}[1.]
+		\item Logical prediction of economic indicators. We devote ourselves to predicting costs and benefits with 7 indexes mentioned above, each of which is linked to the final economic evaluation directly. Through Back Propagation (BP) neural network, we obtain a precise relationship from 7 indexes or 3 indexes to costs or benefits, and parameter settings are proved to be reasonable from another aspect.
+		\item Reasonable Decision-Making of dam construction. We focus on the best economic efficiency as the ultimate goal , and take into account two significant unknowns, one is the number of dams, the other is the location of all small dams. In the Decision-Making Model of small dams, we get an optimum solution and provide detailed parameters including the number of dams, coordinates of all dams, all dam heights, water levels of all reservoirs and so on. Furthermore, we adjust theoretical result for a consideration of extreme situation.
+		\item Adaptable probability statistics model. Person type \uppercase\expandafter{\romannumeral3} distribution is a simple mathematical model which can express the complex hydrological event clearly. Through the curve, we can see that the discharge variable fits well with the distribution. Most importantly, this model can be used to predict discharge of any specific frequency quite accurately.
+		\item Rigorous mathematical derivation and concise indexes. We use very simple conditions and derive 2 simple indexes for juding the order of pouring water during flood period or storing water during low water period. It's quite useful in operation of connection reservoirs.
+		\end{enumerate}
+
+\subsection{Weaknesses}
+		\begin{enumerate}[1.]
+		\item It occurs a range of volatility in the Back Propagation (BP) neural network process, and we need to try many times to get a satisfactory result.
+		\item Assumptions in the Decision-Making Model may not be totally realistic for increasing assumptions will produce more uncertainties to the final result.
+		\item In the Flow Design Model, we assume that the flow law is stable over time. But in reality, the climate changes gradually. Global warming does have a impact on the flow law. In addition, human activities may also influence the discharge of the river. Thus, we can consider climate and human activity intensity as parametric variable to obtain more accurate result.
+		\item The Connection Reservoi Model ignore many factors that will affect the reservoirs in reality, such as the reservoirs may not be connected with local inflow effect. Besides, generate electricity is not the only benefit of reservoirs.  
+		\end{enumerate} 
+\newpage
+\pagestyle{empty} %fancyhdr宏包新增的页面风格
+\begin{thebibliography}{0}
+\thispagestyle{empty}
+%参考文献的排版必须按顺序！
+\bibitem{africa}
+Aon.(2015).Impact of the Failure Of The Kariba Dam:The Institude of Risk Management South Africa Risk Research Report 
+\bibitem{wanneng}
+Li, D., Liu, Y., \& Chen, Y. (Eds.). (2011). \emph{Computer and Computing Technologies in Agriculture IV: 4th IFIP TC 12 Conference, CCTA 2010, Nanchang, China, October 22-25, 2010, Part 2, Selected Papers} (Vol. 345). Springer.
+\bibitem{wiki}
+https://en.wikipedia.org
+
+
+\bibitem{grdc}
+http://www.bafg.de/GRDC/EN/03\_dtprdcts/32\_LTMM/longtermmonthly
+\_node.html;jsessionid=8169029F83BED294D3F6906C12F1B03F.live11293
+
+\bibitem{ge}
+https://www.google.com/earth/
+
+\end{thebibliography}
+\newpage
+\section{Appendix}
+\thispagestyle{empty}
+\subsection{Name of Dams}
+%插入表格！
+\begin{table}[H]
+\centering
+\caption{Name of dams}
+\label{name}
+\begin{tabular}{|cc|}
+\hline
+Name  &  ShortForm\\
+\hline
+ERTAN  &  ET\\
+\hline
+XIAOWAN  &  XW\\
+\hline
+JINPING  &  JP\\
+\hline
+WUDONGDE  &  WDD\\
+\hline
+XILUODU  &  XLD\\
+\hline
+LONGYANGXIA  &  LYX\\
+\hline
+BAIHETAN  &  BHT\\
+\hline
+LAWAXI  &  LWX\\
+\hline
+LIJIAXIA  &  LJX\\
+\hline
+\end{tabular}
+\end{table}
+\end{document}
